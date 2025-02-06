@@ -1,0 +1,190 @@
+package org.jah.eval_sys1.backend;
+
+import java.util.*;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
+import java.io.File;
+
+class Subject {
+String subjectCode;
+int units;
+List<String> prerequisites;
+
+public Subject(String subjectCode, int units, List<String> prerequisites) {
+this.subjectCode = subjectCode;
+this.units = units;
+this.prerequisites = prerequisites;
+}
+}
+
+class Curriculum {
+Map<String, Map<String, List<Subject>>> years;
+
+public Curriculum(String xmlFilePath) {
+years = new HashMap<>();
+initializeCurriculum(xmlFilePath);
+}
+
+private void initializeCurriculum(String xmlFilePath) {
+try {
+File xmlFile = new File(xmlFilePath);
+DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+Document doc = dBuilder.parse(xmlFile);
+doc.getDocumentElement().normalize();
+
+NodeList yearList = doc.getDocumentElement().getChildNodes();
+
+for (int i = 0; i < yearList.getLength(); i++) {
+Node yearNode = yearList.item(i);
+if (yearNode.getNodeType() == Node.ELEMENT_NODE) {
+String yearName = yearNode.getNodeName();
+Map<String, List<Subject>> semesters = new HashMap<>();
+
+NodeList semesterList = yearNode.getChildNodes();
+for (int j = 0; j < semesterList.getLength(); j++) {
+Node semesterNode = semesterList.item(j);
+if (semesterNode.getNodeType() == Node.ELEMENT_NODE) {
+String semesterName = semesterNode.getNodeName();
+List<Subject> subjects = new ArrayList<>();
+
+NodeList subjectList = semesterNode.getChildNodes();
+for (int k = 0; k < subjectList.getLength(); k++) {
+Node subjectNode = subjectList.item(k);
+if (subjectNode.getNodeType() == Node.ELEMENT_NODE) {
+Element subjectElement = (Element) subjectNode;
+String subjectCode = subjectElement.getAttribute("subjectCode");
+int units = Integer.parseInt(subjectElement.getAttribute("units"));
+
+List<String> prerequisites = new ArrayList<>();
+NodeList prereqList = subjectElement.getElementsByTagName("prerequisite");
+for (int l = 0; l < prereqList.getLength(); l++) {
+prerequisites.add(prereqList.item(l).getTextContent());
+}
+
+subjects.add(new Subject(subjectCode, units, prerequisites));
+}
+}
+
+semesters.put(semesterName, subjects);
+}
+}
+
+years.put(yearName, semesters);
+}
+}
+} catch (Exception e) {
+e.printStackTrace();
+}
+}
+}
+
+class Program {
+Curriculum curriculum;
+private static final int MAX_UNITS = 24;
+
+public Program(Curriculum curriculum) {
+this.curriculum = curriculum;
+}
+
+public List<Subject> recommendSubjects(Student student) {
+List<Subject> recommended = new ArrayList<>();
+int currentUnits = 0;
+
+if (student.isNew) {
+for (Subject subject : curriculum.years.get("firstYear").get("firstSem")) {
+if (currentUnits + subject.units <= MAX_UNITS) {
+recommended.add(subject);
+currentUnits += subject.units;
+}
+}
+} else {
+for (Map<String, List<Subject>> year : curriculum.years.values()) {
+for (List<Subject> semester : year.values()) {
+for (Subject subject : semester) {
+if (!student.completedSubjects.containsKey(subject.subjectCode)) {
+boolean canTake = true;
+for (String prereq : subject.prerequisites) {
+if (!student.completedSubjects.containsKey(prereq) || !student.completedSubjects.get(prereq)) {
+canTake = false;
+break;
+}
+}
+if (canTake && currentUnits + subject.units <= MAX_UNITS) {
+recommended.add(subject);
+currentUnits += subject.units;
+}
+} else if (!student.completedSubjects.get(subject.subjectCode)) {
+if (currentUnits + subject.units <= MAX_UNITS) {
+recommended.add(subject);
+currentUnits += subject.units;
+}
+}
+}
+}
+}
+}
+
+return recommended;
+}
+
+public int calculateTotalUnits(List<Subject> subjects) {
+int totalUnits = 0;
+for (Subject subject : subjects) {
+totalUnits += subject.units;
+}
+return totalUnits;
+}
+}
+
+class Student {
+boolean isNew;
+Map<String, Boolean> completedSubjects;
+
+public Student(boolean isNew, Map<String, Boolean> completedSubjects) {
+this.isNew = isNew;
+this.completedSubjects = completedSubjects;
+}
+}
+
+class School {
+Program program;
+
+public School(Program program) {
+this.program = program;
+}
+
+public void evaluateStudentSubjects(Student student) {
+List<Subject> recommendedSubjects = program.recommendSubjects(student);
+int totalUnits = program.calculateTotalUnits(recommendedSubjects);
+
+System.out.println("Recommended Subjects:");
+for (Subject subject : recommendedSubjects) {
+System.out.println(subject.subjectCode);
+}
+System.out.println("Total Units: " + totalUnits);
+}
+}
+
+public class CurriculumEvaluator {
+public static void main(String[] args) {
+Curriculum curriculum = new Curriculum("curriculum.xml");
+Program program = new Program(curriculum);
+School school = new School(program);
+
+// New student
+Student newStudent = new Student(true, new HashMap<>());
+school.evaluateStudentSubjects(newStudent);
+
+// Old student with completed subjects
+Map<String, Boolean> completedSubjects = new HashMap<>();
+completedSubjects.put("eng100", true);
+completedSubjects.put("math100", true);
+completedSubjects.put("cc-comprog11", false); // Failed subject
+completedSubjects.put("pe101", true);
+completedSubjects.put("nstp101", true);
+
+Student oldStudent = new Student(false, completedSubjects);
+school.evaluateStudentSubjects(oldStudent);
+}
+}
