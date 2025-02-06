@@ -1,3 +1,4 @@
+// RecSchedScreenController.java
 package org.jah.eval_sys1;
 
 import javafx.fxml.FXML;
@@ -16,26 +17,30 @@ public class RecSchedScreenController {
     @FXML
     private Label totalUnitsLabel;
 
-    public void setRecommendedSubjects(List<Subject> subjects, int totalUnits) {
-        subjectsContainer.getChildren().clear(); // Clear previous data
+    private String program;
+
+    public void setRecommendedSubjects(List<Subject> subjects, int subjectStatus) {
+        subjectsContainer.getChildren().clear();
 
         for (Subject subject : subjects) {
-            // Create labels for subject and units
+            HBox subjectRow = new HBox(20); // 20px spacing between elements
+
             Label subjectLabel = new Label(subject.getSubjectCode());
-            Label unitsLabel = new Label(subject.getUnits() + " units");
+            Label statusLabel = new Label();
 
-            // Set alignment and spacing
-            subjectLabel.setMinWidth(250);  // Adjust width to align properly
-            unitsLabel.setMinWidth(100);    // Align with headers
             subjectLabel.setStyle("-fx-font-size: 14px;");
-            unitsLabel.setStyle("-fx-font-size: 14px; -fx-text-alignment: right;");
+            statusLabel.setStyle("-fx-font-size: 14px;");
 
-            // HBox to hold a subject row (subject + units)
-            HBox subjectRow = new HBox(100, subjectLabel, unitsLabel); // Spacing between columns
+            subjectRow.getChildren().addAll(subjectLabel, statusLabel);
             subjectsContainer.getChildren().add(subjectRow);
         }
 
-        // Set total units
-        totalUnitsLabel.setText("Total Units: " + totalUnits);
+        int totalSubjects = subjects.size();
+        totalUnitsLabel.setText("Total Subjects: " + totalSubjects);
+    }
+
+    public void setProgram(String program) {
+        this.program = program;
+        System.out.println("Program Set: " + program);
     }
 }

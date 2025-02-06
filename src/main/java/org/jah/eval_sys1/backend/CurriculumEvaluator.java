@@ -30,7 +30,5 @@ public class CurriculumEvaluator {
         Curriculum curriculum = new Curriculum(xmlFilePath);
         Program program = new Program(programInput, curriculum);
         School school = new School();
-
-
     }
 }

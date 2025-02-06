@@ -80,30 +80,34 @@ public class Screen1Controller implements Initializable {
             String name = nameField.getText();
             boolean isNewStudent = newStudentComboBox.getValue().equals("Yes");
             String program = programComboBox.getValue();
-
-            // Set numSubjects to 0 for new students
             int numSubjects = isNewStudent ? 0 : Integer.parseInt(subjectsField.getText());
 
             String xmlFilePath = getXmlFilePath(program);
             Curriculum curriculum = new Curriculum(xmlFilePath);
             Program selectedProgram = new Program(program, curriculum);
-
             Student student = new Student(isNewStudent, new HashMap<>(), selectedProgram);
-
             School school = new School();
+
             List<Subject> subs = school.getRecommendedSubjects(student);
             int totalUnits = school.calculateTotalUnits(subs, student);
 
+            // Load the correct screen based on student type
             String fxmlFile = isNewStudent ? "recSchedScreen.fxml" : "subjectInput.fxml";
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
 
-            // Get the controller and pass data
+            // Pass data to the appropriate controller
             if (isNewStudent) {
                 RecSchedScreenController recSchedController = loader.getController();
                 recSchedController.setRecommendedSubjects(subs, totalUnits);
+                recSchedController.setProgram(program); // Pass program data
+            } else {
+                SubjectInputController subjectInputController = loader.getController();
+                subjectInputController.setNumSubjects(numSubjects);
+                subjectInputController.setProgram(program); // Pass program data
             }
 
+            // Switch scenes
             Stage currentStage = (Stage) rootPane.getScene().getWindow();
             currentStage.setScene(new Scene(root));
 
@@ -111,6 +115,8 @@ public class Screen1Controller implements Initializable {
             showError("Error", "An error occurred while processing: " + e.getMessage());
         }
     }
+
+
 
 
 
