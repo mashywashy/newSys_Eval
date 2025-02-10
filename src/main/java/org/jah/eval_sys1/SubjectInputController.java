@@ -117,7 +117,7 @@ public class SubjectInputController {
 
                 if (subjectCode != null && status != null) {
                     subjectStatus.put(subjectCode, status);
-                    enteredSubjects.add(new Subject(subjectCode, 0, new ArrayList<>()));
+                    enteredSubjects.add(new Subject(subjectCode, status.equalsIgnoreCase("true") ? true : false, new ArrayList<>()));
                 }
             }
         }

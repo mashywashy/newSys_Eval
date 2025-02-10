@@ -19,19 +19,20 @@ public class RecSchedScreenController {
 
     private String program;
 
-    public void setRecommendedSubjects(List<Subject> subjects, int subjectStatus) {
+
+    public void setRecommendedSubjects(List<Subject> subjects, int units) {
         subjectsContainer.getChildren().clear();
 
         for (Subject subject : subjects) {
-            HBox subjectRow = new HBox(20); // 20px spacing between elements
+            HBox subjectRow = new HBox(20);
 
             Label subjectLabel = new Label(subject.getSubjectCode());
-            Label statusLabel = new Label();
+            Label unitsLabel = new Label(new String(String.valueOf(units)));
 
             subjectLabel.setStyle("-fx-font-size: 14px;");
-            statusLabel.setStyle("-fx-font-size: 14px;");
+            unitsLabel.setStyle("-fx-font-size: 14px;");
 
-            subjectRow.getChildren().addAll(subjectLabel, statusLabel);
+            subjectRow.getChildren().addAll(subjectLabel, unitsLabel);
             subjectsContainer.getChildren().add(subjectRow);
         }
 

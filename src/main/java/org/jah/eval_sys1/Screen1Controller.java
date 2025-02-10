@@ -88,7 +88,7 @@ public class Screen1Controller implements Initializable {
             Student student = new Student(isNewStudent, new HashMap<>(), selectedProgram);
             School school = new School();
 
-            List<Subject> subs = school.getRecommendedSubjects(student);
+            List<Subject> subs = selectedProgram.recommendSubjects(student);
             int totalUnits = school.calculateTotalUnits(subs, student);
 
             // Load the correct screen based on student type

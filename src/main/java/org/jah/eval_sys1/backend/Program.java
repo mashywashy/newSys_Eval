@@ -29,7 +29,7 @@ public class Program {
             for (Map<String, List<Subject>> year : curriculum.years.values()) {
                 for (List<Subject> semester : year.values()) {
                     for (Subject subject : semester) {
-                        if (!student.completedSubjects.containsKey(subject.subjectCode)) {
+                        if (!student.completedSubjects.containsKey(subject.subjectCode) || !student.completedSubjects.get(subject.subjectCode)) {
                             boolean canTake = true;
                             for (String prereq : subject.prerequisites) {
                                 if (!student.completedSubjects.containsKey(prereq) || !student.completedSubjects.get(prereq)) {
@@ -41,8 +41,9 @@ public class Program {
                                 recommended.add(subject);
                                 currentUnits += subject.units;
                             }
-                        } else if (!student.completedSubjects.get(subject.subjectCode)) {
-                            if (currentUnits + subject.units <= MAX_UNITS) {
+                        } else {
+                            // If the subject was completed but failed, recommend it for retake
+                            if (!subject.status && currentUnits + subject.units <= MAX_UNITS) {
                                 recommended.add(subject);
                                 currentUnits += subject.units;
                             }
@@ -54,6 +55,7 @@ public class Program {
 
         return recommended;
     }
+
 
     public int calculateTotalUnits(List<Subject> subjects) {
         int totalUnits = 0;

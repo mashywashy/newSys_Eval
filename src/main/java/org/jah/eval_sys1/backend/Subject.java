@@ -5,7 +5,14 @@ import java.util.List;
 public class Subject {
     public String subjectCode;
     public int units;
+    public boolean status;
     public List<String> prerequisites;
+
+    public Subject(String subjectCode, boolean status, List<String> prerequisites) {
+        this.subjectCode = subjectCode;
+        this.status = status;
+        this.prerequisites = prerequisites;
+    }
 
     public Subject(String subjectCode, int units, List<String> prerequisites) {
         this.subjectCode = subjectCode;

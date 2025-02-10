@@ -11,16 +11,16 @@ public class CurriculumEvaluator {
         String xmlFilePath = "";
         switch (programInput) {
             case "BSIT":
-                xmlFilePath = "C:\\Users\\zach\\Documents\\Midterm Datastruct\\Eval_Sys1\\src\\main\\resources\\org\\jah\\eval_sys1\\bsit_curriculum.xml";
+                xmlFilePath = "src/main/resources/org/jah/eval_sys1/bsit_curriculum.xml";
                 break;
             case "BSA":
-                xmlFilePath = "C:\\Users\\zach\\Documents\\Midterm Datastruct\\Eval_Sys1\\src\\main\\resources\\org\\jah\\eval_sys1\\bsa_curriculum.xml";
+                xmlFilePath = "src/main/resources/org/jah/eval_sys1/bsa_curriculum.xml";
                 break;
             case "BSN":
-                xmlFilePath = "C:\\Users\\zach\\Documents\\Midterm Datastruct\\Eval_Sys1\\src\\main\\resources\\org\\jah\\eval_sys1\\bsn_curriculum.xml";
+                xmlFilePath = "src/main/resources/org/jah/eval_sys1/bsn_curriculum.xml";
                 break;
             case "BSMT":
-                xmlFilePath = "C:\\Users\\zach\\Documents\\Midterm Datastruct\\Eval_Sys1\\src\\main\\resources\\org\\jah\\eval_sys1\\bsmt_curriculum.xml";
+                xmlFilePath = "src/main/resources/org/jah/eval_sys1/bsmt_curriculum.xml";
                 break;
             default:
                 System.out.println("Invalid program entered.");
